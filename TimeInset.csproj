@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF><UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <Version>1.0.0</Version><Authors>ja1bus</Authors><Copyright>© ja1bus</Copyright><ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources/icon.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier><SelfContained>false</SelfContained>
+    <SatelliteResourceLanguages>ja</SatelliteResourceLanguages>
+    <!-- WPF uses the manifest's PerMonitorV2 rather than WinForms DPI initialization. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Core/**;Tests/**;tools/**;installer/**;publish/**</DefaultItemExcludes>
+  </PropertyGroup>
+  <ItemGroup><Using Remove="System.Windows.Forms"/><Using Remove="System.Drawing"/>
+    <Using Include="System.IO"/>
+    <ProjectReference Include="Core/TimeInset.Core.csproj"/>
+    <Resource Include="Resources/icon.ico"/>
+  </ItemGroup>
+  <!-- ライセンス表記。MIT License の全文と第三者のソフトウェアの表記を exe と同じフォルダーへ入れる（設定画面のバージョン情報から開く）。
+       scripts では public-repo/ の原本、公開リポジトリではルートの同名ファイルを使う（ClipCompose と同じ）。 -->
+  <ItemGroup Condition="Exists('public-repo/LICENSE')">
+    <None Update="public-repo/LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="public-repo/THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup Condition="!Exists('public-repo/LICENSE') And Exists('LICENSE')">
+    <None Update="LICENSE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

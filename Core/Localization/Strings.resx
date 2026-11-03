@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="Paused" xml:space="preserve">
+    <value>停止中</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>開始前</value>
+  </data>
+  <data name="Running" xml:space="preserve">
+    <value>計測中</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Display" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="Clock" xml:space="preserve">
+    <value>時計</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>日付</value>
+  </data>
+  <data name="Timer" xml:space="preserve">
+    <value>タイマー</value>
+  </data>
+  <data name="Hotkeys" xml:space="preserve">
+    <value>ショートカット</value>
+  </data>
+  <data name="Vertical" xml:space="preserve">
+    <value>縦並び</value>
+  </data>
+  <data name="Horizontal" xml:space="preserve">
+    <value>横一列</value>
+  </data>
+  <data name="Layout" xml:space="preserve">
+    <value>並び方</value>
+  </data>
+  <data name="FontSize" xml:space="preserve">
+    <value>文字の大きさ</value>
+  </data>
+  <data name="Foreground" xml:space="preserve">
+    <value>文字色</value>
+  </data>
+  <data name="Background" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="Opacity" xml:space="preserve">
+    <value>背景の不透明度</value>
+  </data>
+  <data name="Outline" xml:space="preserve">
+    <value>縁取り</value>
+  </data>
+  <data name="Icons" xml:space="preserve">
+    <value>アイコンを表示</value>
+  </data>
+  <data name="Topmost" xml:space="preserve">
+    <value>最前面</value>
+  </data>
+  <data name="ResetPosition" xml:space="preserve">
+    <value>表示位置をリセット・マウス透過解除</value>
+  </data>
+  <data name="CurrentTime" xml:space="preserve">
+    <value>現在日時</value>
+  </data>
+  <data name="SpecifiedTime" xml:space="preserve">
+    <value>指定日時</value>
+  </data>
+  <data name="SpecifiedInput" xml:space="preserve">
+    <value>日時</value>
+  </data>
+  <data name="ClockHelp" xml:space="preserve">
+    <value>指定日時は［適用］または［OK］を押した時点から進み、Windowsの時刻修正には追従しません。起動するたびに現在日時に戻ります。</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>開始／再開</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>タイマーをリセット</value>
+  </data>
+  <data name="ResetPrompt" xml:space="preserve">
+    <value>計測を停止し、0秒にリセットしますか？</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="ExitPrompt" xml:space="preserve">
+    <value>計測値は失われます。TimeInsetを終了しますか？</value>
+  </data>
+  <data name="HotkeyHelp" xml:space="preserve">
+    <value>入力欄を選んで Ctrl／Alt／Shift ＋キーを押します。Backspace か Delete で解除します。Win キーと F12 は使えません。登録できても、他のアプリ内の操作と重なる場合があります。</value>
+  </data>
+  <data name="ToggleClickThrough" xml:space="preserve">
+    <value>マウス透過切替</value>
+  </data>
+  <data name="InvalidHotkey" xml:space="preserve">
+    <value>このキーは使えません。Ctrl／Alt／Shift のいずれかと組み合わせてください（Win キーと F12 は不可）。</value>
+  </data>
+  <data name="InvalidSettings" xml:space="preserve">
+    <value>文字サイズ・倍率・RGB色・日時（2000～2099年）を確認してください。</value>
+  </data>
+  <data name="DoesNotFit" xml:space="preserve">
+    <value>現在の作業領域に収まりません。文字サイズや表示項目を減らしてください。</value>
+  </data>
+  <data name="SizeAdjusted" xml:space="preserve">
+    <value>画面内に収めるため文字サイズを下げました。</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>お知らせ</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="SettingsPath" xml:space="preserve">
+    <value>設定ファイル</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>登録失敗</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>未割当</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>外部通信・クラウド同期・計測履歴の保存は行いません。設定とエラーログはこのPC内に保存します。</value>
+  </data>
+  <data name="SettingsAdjusted" xml:space="preserve">
+    <value>不正な設定値を既定値に補正しました。</value>
+  </data>
+  <data name="SettingsUnsupported" xml:space="preserve">
+    <value>新しいバージョンの設定ファイルのため上書きしません。</value>
+  </data>
+  <data name="SettingsCorrupt" xml:space="preserve">
+    <value>破損した設定を退避して安全な既定値で起動しました。</value>
+  </data>
+  <data name="SettingsUnreadable" xml:space="preserve">
+    <value>設定ファイルの読み取り・退避ができないため上書きしません。</value>
+  </data>
+  <data name="TabGeneral" xml:space="preserve">
+    <value>全般</value>
+  </data>
+  <data name="TabAbout" xml:space="preserve">
+    <value>バージョン情報</value>
+  </data>
+  <data name="ToggleTimer" xml:space="preserve">
+    <value>タイマーの開始／一時停止</value>
+  </data>
+  <data name="ResetDefaults" xml:space="preserve">
+    <value>既定値に戻す</value>
+  </data>
+  <data name="ShownItems" xml:space="preserve">
+    <value>表示する項目と順番</value>
+  </data>
+  <data name="ClockSource" xml:space="preserve">
+    <value>時計に表示する日時</value>
+  </data>
+  <data name="ColorBlack" xml:space="preserve">
+    <value>黒</value>
+  </data>
+  <data name="ColorWhite" xml:space="preserve">
+    <value>白</value>
+  </data>
+  <data name="ColorGray" xml:space="preserve">
+    <value>グレー</value>
+  </data>
+  <data name="ColorGreen" xml:space="preserve">
+    <value>緑（クロマキー）</value>
+  </data>
+  <data name="ColorBlue" xml:space="preserve">
+    <value>青（クロマキー）</value>
+  </data>
+  <data name="HotkeysSuspended" xml:space="preserve">
+    <value>ショートカットの入力欄を選んでいる間は、押したキーが入力欄に入るよう、TimeInset のショートカットを一時解除しています。</value>
+  </data>
+  <data name="ColorYellow" xml:space="preserve">
+    <value>黄</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>上へ</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>下へ</value>
+  </data>
+  <data name="AboutWebsiteLink" xml:space="preserve">
+    <value>Webサイト</value>
+  </data>
+  <data name="AboutManualLink" xml:space="preserve">
+    <value>取扱説明書（Web）</value>
+  </data>
+  <data name="AboutPrivacyLink" xml:space="preserve">
+    <value>プライバシーポリシー（Web）</value>
+  </data>
+  <data name="AboutLicenseLink" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="AboutLicenseTip" xml:space="preserve">
+    <value>TimeInset は MIT License で公開しているオープンソースソフトウェアです。押すとライセンスの全文を表示します。</value>
+  </data>
+  <data name="AboutSourceLink" xml:space="preserve">
+    <value>ソースコード</value>
+  </data>
+  <data name="AboutNoticesLink" xml:space="preserve">
+    <value>第三者のソフトウェア</value>
+  </data>
+  <data name="AboutNoticesTip" xml:space="preserve">
+    <value>第三者のソフトウェア（.NET など）の表記を表示します。</value>
+  </data>
+  <data name="BundledFileUnreadableFormat" xml:space="preserve">
+    <value>ファイルを読み込めませんでした。次のファイルを確認してください。
+{0}</value>
+  </data>
+  <data name="OpenUrlFailedFormat" xml:space="preserve">
+    <value>ブラウザーでページを開けませんでした。次のアドレスを手動で開いてください。
+{0}</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="HotkeyRegisteredFormat" xml:space="preserve">
+    <value>{0} を登録しました</value>
+  </data>
+  <data name="HotkeyAvailableFormat" xml:space="preserve">
+    <value>{0} は使えます（適用すると登録します）</value>
+  </data>
+  <data name="HotkeyInUseFormat" xml:space="preserve">
+    <value>{0} は他のアプリまたは Windows が使用中のため使えません</value>
+  </data>
+  <data name="HotkeyErrorFormat" xml:space="preserve">
+    <value>{0} を登録できません（エラー {1}）</value>
+  </data>
+  <data name="HotkeyWillUnassign" xml:space="preserve">
+    <value>適用すると未割当になります</value>
+  </data>
+  <data name="SpecifiedRange" xml:space="preserve">
+    <value>指定できる日時は 2000/01/01 00:00:00 ～ 2099/12/31 23:59:59 です。</value>
+  </data>
+</root>
