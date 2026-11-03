@@ -57,6 +57,10 @@ public sealed class HotkeyService : IDisposable
     }
     public void ApplyChanges(AppSettings old, AppSettings next, Action save)
     {
+        // Position, color and other edits keep the keys: re-registering would release them for a
+        // moment, so only save. A failed registration is still retried on the next commit.
+        if (!suspended && old.Keys.SequenceEqual(next.Keys) && Errors.All(e => e == null)
+            && registered.Count == next.Keys.Count(k => k != null)) { save(); return; }
         ValidateChanges(old, next);
         RegisterCore(next);
         try

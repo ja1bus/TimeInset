@@ -47,21 +47,29 @@ public sealed class AppHost : IDisposable
         overlay.Show(); overlay.Apply(Settings, true);
         Hotkeys.Register(Settings);
         Notice = store.Warning;
+        // Settings saved on a larger monitor may not fit the one restored to now.
+        FitToScreen();
         Refresh();
         if (Notice != null || Hotkeys.Errors.Any(x => x != null)) OpenSettings();
     }
     private void DisplayChanged(object? sender, EventArgs e) => Application.Current.Dispatcher.BeginInvoke(() =>
     {
         if (disposed) return;
+        FitToScreen();
+    });
+    // Shrinks the text until the overlay fits the work area of its monitor, then keeps it on screen.
+    private void FitToScreen()
+    {
         if (!overlay.Fits(Settings))
         {
             var next = Settings;
             while (next.FontSize > 12 && !overlay.Fits(next)) next = next with { FontSize = next.FontSize - 1 };
-            Notice = Strings.SizeAdjusted;
+            if (Notice == null) Notice = Strings.SizeAdjusted;
+            else if (!Notice.Contains(Strings.SizeAdjusted, StringComparison.Ordinal)) Notice += "\n" + Strings.SizeAdjusted;
             Commit(next, false);
         }
         overlay.Constrain();
-    });
+    }
     public void Update()
     {
         var before = new Size(overlay.View.Width, overlay.View.Height);
@@ -106,12 +114,12 @@ public sealed class AppHost : IDisposable
         if (!Commit(next)) return;
         overlay.Show(); overlay.RestorePosition(next); Refresh();
     }
-    public bool ApplyEdited(AppSettings baseline, AppSettings edited, bool specifiedMode, bool modeChanged, bool reapplyDate = false)
+    public bool ApplyEdited(AppSettings baseline, AppSettings edited, bool specifiedMode, bool modeChanged)
     {
         var merged = AppSettings.Merge(baseline, edited, Settings);
         bool dateChanged = baseline.SpecifiedDate != edited.SpecifiedDate;
         if (!Commit(merged)) return false;
-        if (reapplyDate || modeChanged || dateChanged && specifiedMode)
+        if (modeChanged || dateChanged && specifiedMode)
         { if (specifiedMode) Model.UseSpecified(merged.SpecifiedDate); else Model.UseCurrent(); }
         Update();
         return true;
@@ -136,7 +144,8 @@ public sealed class AppHost : IDisposable
         if (settingsWindow == null)
         {
             settingsWindow = new(this);
-            settingsWindow.Closed += (_, _) => { settingsWindow = null; Hotkeys.Resume(Settings); SetPreview(null); };
+            // On exit Shutdown closes every window, the overlay possibly first; re-showing it then throws.
+            settingsWindow.Closed += (_, _) => { settingsWindow = null; if (exiting || disposed) return; Hotkeys.Resume(Settings); SetPreview(null); };
         }
         settingsWindow.Show();
         if (settingsWindow.WindowState == WindowState.Minimized) settingsWindow.WindowState = WindowState.Normal;
@@ -172,13 +181,19 @@ public sealed class AppHost : IDisposable
         if (tray) Add(Strings.ResetPosition, ResetPosition);
         Add(Strings.Settings, OpenSettings); Add(Strings.Exit, Exit);
         menu.Show(x, y);
+        // The overlay never activates and a tray click leaves the taskbar in front. Unless the menu is
+        // the foreground window, its item clicks are not delivered reliably: the menu just closes and the
+        // next right-click is spent dismissing it (1.0.0: "Exit" needed several tries).
+        SetForegroundWindow(menu.Handle);
     }
+    [System.Runtime.InteropServices.DllImport("user32.dll")] private static extern bool SetForegroundWindow(nint hwnd);
     public void Exit()
     {
         if (Model.State != TimerState.Ready && MessageBox.Show(Strings.ExitPrompt, "TimeInset", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
         ExitForSession();
     }
-    public void ExitForSession() => Application.Current.Shutdown();
+    private bool exiting;
+    public void ExitForSession() { exiting = true; Application.Current.Shutdown(); }
     public void Dispose()
     {
         if (disposed) return; disposed = true;

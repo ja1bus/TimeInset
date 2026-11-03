@@ -39,6 +39,23 @@ public class WindowsBehaviorTests
             if ((items & 4) != 0) Assert.True(new Rect(measured).Contains(view.TimerBounds));
         }
     });
+    // Icon strokes and the outline grow with the text size; at the largest size they must still stay
+    // inside the window (the background fills exactly the window, so any overflow widens the bounds).
+    [Theory][InlineData(1)][InlineData(2)][InlineData(4)][InlineData(7)]
+    public void OutlinedIconsStayInsideAtTheLargestSize(int items) => Sta(() =>
+    {
+        var time = new FakeTime(); var model = new TimeModel(time); var view = new OverlayView(model);
+        foreach (var layout in Enum.GetValues<DisplayLayout>())
+        foreach (bool paused in new[] { false, true })
+        {
+            if (paused) { model.Start(); time.Advance(5); model.Pause(); } else model.Reset();
+            var size = view.Configure(new() { Items = (DisplayItems)items, FontSize = 120, Layout = layout, Icons = true, Outline = true });
+            view.Measure(size); view.Arrange(new Rect(size)); view.UpdateLayout();
+            var bounds = VisualTreeHelper.GetDrawing(view).Bounds;
+            Assert.True(bounds.Left >= -0.01 && bounds.Top >= -0.01 && bounds.Right <= size.Width + 0.01 && bounds.Bottom <= size.Height + 0.01,
+                $"{layout} paused={paused}: {bounds} in {size}");
+        }
+    });
     [Theory][InlineData(true)][InlineData(false)]
     public void StackedDateHasTheSameWidthAsTheClock(bool icons) => Sta(() =>
     {

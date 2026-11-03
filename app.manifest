@@ -18,8 +18,8 @@
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
       <!--
-        Per-Monitor V2（仕様書 §16）。画面取得・カーソル位置・ウィンドウ位置をすべて物理ピクセルで扱うために必須。
-        これが無いと OS が座標を仮想化し、拡大率の異なるモニターで選択範囲と取得画像がずれる。
+        Per-Monitor V2（仕様書 §3）。表示の位置・大きさとモニターの作業領域を、拡大率の異なるモニターでも正しく扱うために必須。
+        これが無いと OS が座標を仮想化し、モニターをまたぐと表示がぼやけたり位置・大きさの判定がずれたりする。
       -->
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
       <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>

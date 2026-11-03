@@ -72,6 +72,15 @@ public class SettingsTests : IDisposable
         Assert.Equal("{broken", File.ReadAllText(Assert.Single(Directory.GetFiles(folder, "settings.corrupt-*"))));
         store.Save(settings); Assert.Equal(settings, store.Load());
     }
+    [Fact] public void DuplicateKeyIsTreatedAsCorrupt()
+    {
+        const string content = "{\"fontSize\":28,\"fontSize\":40}";
+        Directory.CreateDirectory(folder); File.WriteAllText(FilePath, content);
+        var store = new SettingsStore(FilePath); var settings = store.Load();
+        Assert.NotNull(store.Warning); Assert.Equal(new AppSettings(), settings);
+        Assert.Equal(content, File.ReadAllText(Assert.Single(Directory.GetFiles(folder, "settings.corrupt-*"))));
+        store.Save(settings); Assert.Equal(settings, store.Load());
+    }
     [Fact] public void FutureSchemaIsNotOverwritten()
     {
         Directory.CreateDirectory(folder); File.WriteAllText(FilePath, "{\"SchemaVersion\":99}");

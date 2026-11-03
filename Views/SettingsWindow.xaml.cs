@@ -71,7 +71,8 @@ public partial class SettingsWindow : Window
         }
         Changed();
         host.Changed += UpdateStatus;
-        Closed += (_, _) => { host.Changed -= UpdateStatus; host.Hotkeys.Resume(host.Settings); };
+        // AppHost resumes the shortcuts when this window closes.
+        Closed += (_, _) => host.Changed -= UpdateStatus;
     }
 
     private static SolidColorBrush Brush(string color) => new((Color)ColorConverter.ConvertFromString(color));

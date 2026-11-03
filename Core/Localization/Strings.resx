@@ -70,7 +70,7 @@
     <value>最前面</value>
   </data>
   <data name="ResetPosition" xml:space="preserve">
-    <value>表示位置をリセット・マウス透過解除</value>
+    <value>表示位置をリセット</value>
   </data>
   <data name="CurrentTime" xml:space="preserve">
     <value>現在日時</value>
@@ -105,14 +105,8 @@
   <data name="HotkeyHelp" xml:space="preserve">
     <value>入力欄を選んで Ctrl／Alt／Shift ＋キーを押します。Backspace か Delete で解除します。Win キーと F12 は使えません。登録できても、他のアプリ内の操作と重なる場合があります。</value>
   </data>
-  <data name="ToggleClickThrough" xml:space="preserve">
-    <value>マウス透過切替</value>
-  </data>
   <data name="InvalidHotkey" xml:space="preserve">
     <value>このキーは使えません。Ctrl／Alt／Shift のいずれかと組み合わせてください（Win キーと F12 は不可）。</value>
-  </data>
-  <data name="InvalidSettings" xml:space="preserve">
-    <value>文字サイズ・倍率・RGB色・日時（2000～2099年）を確認してください。</value>
   </data>
   <data name="DoesNotFit" xml:space="preserve">
     <value>現在の作業領域に収まりません。文字サイズや表示項目を減らしてください。</value>

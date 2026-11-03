@@ -39,7 +39,9 @@ public sealed class SettingsStore(string path)
             if (value.SchemaVersion > 1) { blocked = true; warningKey = nameof(Strings.SettingsUnsupported); warningDetail = value.SchemaVersion.ToString(System.Globalization.CultureInfo.InvariantCulture); }
             return normalized;
         }
-        catch (JsonException ex)
+        // A duplicated key ({"fontSize":28,"fontSize":40}) surfaces as ArgumentException when the
+        // object is enumerated; it is treated as a corrupt file like any other parse error.
+        catch (Exception ex) when (ex is JsonException or ArgumentException)
         {
             try { File.Move(Path, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Path)!, $"settings.corrupt-{DateTime.Now:yyyyMMdd-HHmmssfff}.json")); }
             catch (Exception move) when (move is IOException or UnauthorizedAccessException) { blocked = true; warningKey = nameof(Strings.SettingsUnreadable); warningDetail = move.Message; }

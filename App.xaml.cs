@@ -14,6 +14,9 @@ public partial class App : Application
         {
             instance = SingleInstance.TryAcquire();
             if (instance == null) { Shutdown(); return; }
+            // The tray and overlay menus are WinForms ContextMenuStrips running in WPF's message loop.
+            // Without this, WinForms' menu message handling is skipped and item clicks are sometimes lost.
+            System.Windows.Forms.Integration.WindowsFormsHost.EnableWindowsFormsInterop();
             var store = new SettingsStore(DataPaths.Settings);
             var settings = store.Load();
             host = new AppHost(store, settings);
