@@ -45,7 +45,7 @@ public partial class SettingsWindow : Window
         SettingsPathText.Text = host.SettingsPath;
 
         Load(baseline, baselineSpecified);
-        foreach (var c in new[] { OutlineCheck, IconsCheck, TopmostCheck })
+        foreach (var c in new[] { OutlineCheck, IconsCheck, TopmostCheck, ConfirmResetCheck })
         { c.Checked += (_, _) => Changed(); c.Unchecked += (_, _) => Changed(); }
         foreach (var s in new[] { FontSizeSlider, OpacitySlider }) s.ValueChanged += (_, _) => Changed();
         foreach (var c in new[] { LayoutCombo, ForegroundCombo, BackgroundCombo, HourCombo, MinuteCombo, SecondCombo }) c.SelectionChanged += (_, _) => Changed();
@@ -131,6 +131,7 @@ public partial class SettingsWindow : Window
         BackgroundCombo.SelectedIndex = IndexOf(AppSettings.BackgroundChoices, s.Background);
         OutlineCheck.IsChecked = s.Outline; IconsCheck.IsChecked = s.Icons;
         TopmostCheck.IsChecked = s.Topmost;
+        ConfirmResetCheck.IsChecked = s.ConfirmReset;
         (specified ? SpecifiedRadio : CurrentRadio).IsChecked = true;
         SpecifiedDatePicker.SelectedDate = s.SpecifiedDate.Date;
         HourCombo.SelectedIndex = s.SpecifiedDate.Hour; MinuteCombo.SelectedIndex = s.SpecifiedDate.Minute; SecondCombo.SelectedIndex = s.SpecifiedDate.Second;
@@ -156,6 +157,7 @@ public partial class SettingsWindow : Window
             Background = AppSettings.BackgroundChoices[Math.Max(0, BackgroundCombo.SelectedIndex)],
             Outline = OutlineCheck.IsChecked == true, Icons = IconsCheck.IsChecked == true,
             Topmost = TopmostCheck.IsChecked == true,
+            ConfirmReset = ConfirmResetCheck.IsChecked == true,
             SpecifiedDate = date,
         }).WithKeys(keys).WithItems(shown);
     }

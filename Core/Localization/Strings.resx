@@ -99,6 +99,18 @@
   <data name="Exit" xml:space="preserve">
     <value>終了</value>
   </data>
+  <data name="Confirmations" xml:space="preserve">
+    <value>確認</value>
+  </data>
+  <data name="ConfirmReset" xml:space="preserve">
+    <value>タイマーをリセットするときに確認する</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
   <data name="ExitPrompt" xml:space="preserve">
     <value>計測値は失われます。TimeInsetを終了しますか？</value>
   </data>

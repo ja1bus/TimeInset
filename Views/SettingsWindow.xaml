@@ -162,6 +162,8 @@
                             <TextBlock Grid.Row="1" Grid.Column="1" x:Name="ToggleTimerStatus" Margin="0,4,0,0" TextWrapping="Wrap" />
                         </Grid>
                         <TextBlock Text="{x:Static l:Strings.HotkeyHelp}" Style="{StaticResource Note}" />
+                        <TextBlock Text="{x:Static l:Strings.Confirmations}" Style="{StaticResource Heading}" Margin="0,20,0,6" />
+                        <CheckBox x:Name="ConfirmResetCheck" Content="{x:Static l:Strings.ConfirmReset}" />
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

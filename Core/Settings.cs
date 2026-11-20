@@ -35,6 +35,8 @@ public sealed record AppSettings
     public double Y { get; init; } = 16;
     public DateTime SpecifiedDate { get; init; } = new(2026, 1, 1);
     public Hotkey? ToggleTimer { get; init; }
+    // Ask before resetting the timer (1.1.0). Missing in older files, which then read as true.
+    public bool ConfirmReset { get; init; } = true;
     // Index order is shared with HotkeyService ids and the settings window rows.
     [System.Text.Json.Serialization.JsonIgnore]
     public Hotkey?[] Keys => [ToggleTimer];
@@ -108,4 +110,9 @@ public static class Positioning
     public static Placement Restore(AppSettings s, WorkArea area, double widthDip, double heightDip) => new(
         Math.Clamp(area.Left + s.X * area.Scale, area.Left, Math.Max(area.Left, area.Left + area.Width - widthDip * area.Scale)),
         Math.Clamp(area.Top + s.Y * area.Scale, area.Top, Math.Max(area.Top, area.Top + area.Height - heightDip * area.Scale)));
+    // Top-left that centers a window in a work area (physical pixels). Each axis is independent:
+    // a side larger than the area starts at the area's edge; otherwise the half difference is floored.
+    public static Placement Center(WorkArea area, double width, double height) => new(
+        width >= area.Width ? area.Left : area.Left + Math.Floor((area.Width - width) / 2),
+        height >= area.Height ? area.Top : area.Top + Math.Floor((area.Height - height) / 2));
 }

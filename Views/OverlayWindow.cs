@@ -32,8 +32,17 @@ public sealed class OverlayWindow : Window
         };
         IsVisibleChanged += (_, _) => SyncInput();
         SizeChanged += (_, _) => SyncInput();
-        Closed += (_, _) => input.Dispose();
+        Closed += (_, _) => { closed = true; input.Dispose(); };
     }
+    private bool closed, modal;
+    private nint modalWindow;
+    // While a confirmation is open (spec §6): the overlay takes no input, even if it is shown or
+    // re-shown during it, and stays below the confirmation when Topmost is turned on again (review R1/R2).
+    public void BeginModal() { modal = true; SyncInput(); }
+    public void SetModalWindow(nint hwnd) { modalWindow = hwnd; SyncInput(); }
+    public void EndModal() { modal = false; modalWindow = 0; SyncInput(); }
+    /// <summary>試験用: 入力面のウィンドウ。</summary>
+    public nint InputHandle => closed ? 0 : input.Handle;
     private nint Hook(nint h, int msg, nint wp, nint lp, ref bool handled)
     {
         if (msg == 0x21) { handled = true; return 3; } // MA_NOACTIVATE
@@ -81,9 +90,9 @@ public sealed class OverlayWindow : Window
     }
     private void SyncInput()
     {
-        if (handle == 0) return;
+        if (handle == 0 || closed) return;
         Native.GetWindowRect(handle, out var r);
-        input.Place(r, IsVisible, Topmost, handle);
+        input.Place(r, IsVisible, Topmost, handle, modal, modalWindow);
     }
     // A non-layered, fully glass input plane owns the entire rectangle, including
     // zero-alpha pixels. The visual window is always click-through. This avoids
@@ -104,16 +113,25 @@ public sealed class OverlayWindow : Window
             DwmExtendFrameIntoClientArea(source.Handle, ref margins);
             source.AddHook(Hook);
         }
-        public void Place(Native.Rect r, bool visible, bool topmost, nint visual)
+        public nint Handle => source.Handle;
+        private bool blocked;
+        public void Place(Native.Rect r, bool visible, bool topmost, nint visual, bool modal, nint modalWindow)
         {
             // Keep the input plane immediately behind the visible overlay.
             Native.SetWindowPos(source.Handle, topmost ? new(-1) : new(-2), r.Left, r.Top, r.Right - r.Left, r.Bottom - r.Top, (uint)(0x10 | (visible ? 0x40 : 0x80)));
+            // Topmost windows are not ordered among themselves: stay just behind an open confirmation.
+            if (topmost && modalWindow != 0) Native.SetWindowPos(source.Handle, modalWindow, 0, 0, 0, 0, 0x13);
             Native.SetWindowPos(visual, source.Handle, 0, 0, 0, 0, 0x13);
+            if (modal && !blocked && pressed) { pressed = dragging = false; ReleaseCapture(); }
+            blocked = modal;
+            EnableWindow(source.Handle, !modal);
         }
         private nint Hook(nint hwnd, int msg, nint wp, nint lp, ref bool handled)
         {
             if (msg == 0x21) { handled = true; return 3; }
             if (msg == 0x84) { handled = true; return 1; }
+            // Messages sent directly still reach a disabled window.
+            if (blocked && msg is >= 0x200 and <= 0x20E) { handled = true; return 0; }
             if (msg == 0x201)
             {
                 GetCursorPos(out var pt); down = new(pt.X, pt.Y); pressed = true; dragging = false; SetCapture(hwnd);
@@ -154,6 +172,7 @@ public sealed class OverlayWindow : Window
         public void Dispose() => source.Dispose();
         [StructLayout(LayoutKind.Sequential)] private struct Margins { public int Left, Right, Top, Bottom; }
         [DllImport("dwmapi.dll")] private static extern int DwmExtendFrameIntoClientArea(nint hwnd, ref Margins margins);
+        [DllImport("user32.dll")] private static extern bool EnableWindow(nint hwnd, bool enable);
         [DllImport("user32.dll")] private static extern nint SetCapture(nint hwnd);
         [DllImport("user32.dll")] private static extern bool ReleaseCapture();
         [DllImport("user32.dll")] private static extern bool GetCursorPos(out System.Drawing.Point point);

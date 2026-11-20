@@ -82,7 +82,33 @@ public sealed class AppHost : IDisposable
     public void Start() { Model.Start(); Update(); }
     public void Pause() { Model.Pause(); Update(); }
     public void ToggleTimer() { if (Model.State == TimerState.Running) Pause(); else Start(); }
-    public void Reset() { if (MessageBox.Show(Strings.ResetPrompt, "TimeInset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes) { Model.Reset(); overlay.View.Configure(Effective); Update(); } }
+    /// <param name="anchor">確認を出すモニターを決める点（メニューを開いた点）。省略時はカーソル位置。</param>
+    public void Reset(System.Drawing.Point? anchor = null)
+    {
+        if (confirm.Exiting || disposed) return;
+        // While a confirmation is open, a reset is never carried out, whatever the setting (spec §16.4).
+        if (confirm.IsOpen) { confirmWindow?.BringToFront(); return; }
+        if (Settings.ConfirmReset && !Confirm(Strings.ResetPrompt, warning: false, anchor)) return;
+        if (confirm.Exiting || disposed) return;
+        Model.Reset(); overlay.View.Configure(Effective); Update();
+    }
+    // One confirmation at a time, shown on the monitor where the menu was opened (spec §6, §16).
+    private readonly ConfirmGate confirm = new();
+    private ConfirmWindow? confirmWindow;
+    private bool Confirm(string message, bool warning, System.Drawing.Point? anchor)
+    {
+        if (!confirm.TryOpen(() => confirmWindow?.BringToFront())) return false;
+        // ShowDialog disables only the windows visible when it starts, so an overlay shown from the tray
+        // during the confirmation would take input; the overlay is blocked and kept below it explicitly.
+        overlay.BeginModal();
+        try
+        {
+            var window = confirmWindow = new ConfirmWindow(message, warning, anchor ?? Forms.Cursor.Position);
+            window.SourceInitialized += (_, _) => overlay.SetModalWindow(new System.Windows.Interop.WindowInteropHelper(window).Handle);
+            return window.ShowDialog() == true;
+        }
+        finally { confirmWindow = null; confirm.Close(); overlay.EndModal(); }
+    }
     public bool Commit(AppSettings candidate, bool checkSize = true)
     {
         try
@@ -141,11 +167,13 @@ public sealed class AppHost : IDisposable
     }
     public void OpenSettings()
     {
+        if (confirm.Exiting || disposed) return;
+        if (confirm.IsOpen) { confirmWindow?.BringToFront(); return; }
         if (settingsWindow == null)
         {
             settingsWindow = new(this);
             // On exit Shutdown closes every window, the overlay possibly first; re-showing it then throws.
-            settingsWindow.Closed += (_, _) => { settingsWindow = null; if (exiting || disposed) return; Hotkeys.Resume(Settings); SetPreview(null); };
+            settingsWindow.Closed += (_, _) => { settingsWindow = null; if (confirm.Exiting || disposed) return; Hotkeys.Resume(Settings); SetPreview(null); };
         }
         settingsWindow.Show();
         if (settingsWindow.WindowState == WindowState.Minimized) settingsWindow.WindowState = WindowState.Normal;
@@ -157,6 +185,8 @@ public sealed class AppHost : IDisposable
     private void ShowMenu(int x, int y, bool tray)
     {
         menu?.Dispose(); menu = new Forms.ContextMenuStrip();
+        // Only this menu's items use its point; a later call from elsewhere uses the cursor (review R4).
+        var point = new System.Drawing.Point(x, y);
         Forms.ToolStripMenuItem Add(string text, Action action, bool? check = null)
         {
             var item = new Forms.ToolStripMenuItem(text, null, (_, _) => action());
@@ -175,11 +205,11 @@ public sealed class AppHost : IDisposable
         var timerItem = Add(Model.State == TimerState.Running ? Strings.Pause : Strings.Start, Model.State == TimerState.Running ? Pause : Start);
         // Show the shortcut on the right of the item, only while it is actually registered.
         if (Settings.ToggleTimer is { } key && Hotkeys.Errors[0] == null) timerItem.ShortcutKeyDisplayString = key.ToString();
-        Add(Strings.Reset, Reset);
+        Add(Strings.Reset, () => Reset(point));
         menu.Items.Add(new Forms.ToolStripSeparator());
         Add(Strings.Topmost, () => Commit(Settings with { Topmost = !Settings.Topmost }), Settings.Topmost);
         if (tray) Add(Strings.ResetPosition, ResetPosition);
-        Add(Strings.Settings, OpenSettings); Add(Strings.Exit, Exit);
+        Add(Strings.Settings, OpenSettings); Add(Strings.Exit, () => Exit(point));
         menu.Show(x, y);
         // The overlay never activates and a tray click leaves the taskbar in front. Unless the menu is
         // the foreground window, its item clicks are not delivered reliably: the menu just closes and the
@@ -187,13 +217,21 @@ public sealed class AppHost : IDisposable
         SetForegroundWindow(menu.Handle);
     }
     [System.Runtime.InteropServices.DllImport("user32.dll")] private static extern bool SetForegroundWindow(nint hwnd);
-    public void Exit()
+    /// <param name="anchor">確認を出すモニターを決める点（メニューを開いた点）。省略時はカーソル位置。</param>
+    public void Exit(System.Drawing.Point? anchor = null)
     {
-        if (Model.State != TimerState.Ready && MessageBox.Show(Strings.ExitPrompt, "TimeInset", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+        if (confirm.Exiting || disposed) return;
+        if (confirm.IsOpen) { confirmWindow?.BringToFront(); return; }
+        if (Model.State != TimerState.Ready && !Confirm(Strings.ExitPrompt, warning: true, anchor)) return;
         ExitForSession();
     }
-    private bool exiting;
-    public void ExitForSession() { exiting = true; Application.Current.Shutdown(); }
+    // Also called on Windows sign-out/shutdown. Only the first call shuts down; Application.Current
+    // is null once shutdown has finished (1.0.1 threw NullReferenceException here).
+    public void ExitForSession()
+    {
+        if (!confirm.BeginExit()) return;
+        Application.Current?.Shutdown();
+    }
     public void Dispose()
     {
         if (disposed) return; disposed = true;
